@@ -11,6 +11,12 @@
 
 https://github.com/agentdh/VONA_PixelMix/releases/latest
 
+## 튜토리얼
+
+프로그램 사용법은 아래 튜토리얼 페이지에서 확인할 수 있습니다.
+
+https://agentdh.github.io/VONA_PixelMix/tutorial.html
+
 ## 설치 방법
 
 ### Windows
