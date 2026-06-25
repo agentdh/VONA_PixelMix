@@ -15,19 +15,19 @@ https://github.com/agentdh/VONA_PixelMix/releases/latest
 
 ### Windows
 
-1. Releases 페이지에서 `VONA_MC_SkinPR_Setup_버전.exe` 파일을 다운로드합니다.
+1. Releases 페이지에서 `VONA_PixelMix_Setup_버전.exe` 파일을 다운로드합니다.
 2. 다운로드한 `.exe` 파일을 실행합니다.
 3. 설치 화면 안내에 따라 설치합니다.
 4. 설치가 끝나면 VONA PixelMix를 실행합니다.
 
 ### macOS
 
-1. Releases 페이지에서 `VONA_MC_SkinPR-버전-mac-universal.dmg` 파일을 다운로드합니다.
+1. Releases 페이지에서 `VONA_PixelMix-버전-mac-universal.dmg` 파일을 다운로드합니다.
 2. 다운로드한 `.dmg` 파일을 엽니다.
 3. 앱을 Applications 폴더로 옮깁니다.
 4. Applications 폴더에서 VONA PixelMix를 실행합니다.
 
-macOS에서 “확인되지 않은 개발자” 안내가 보일 수 있습니다. 이 경우 시스템 설정의 개인정보 보호 및 보안 메뉴에서 실행을 허용하면 됩니다.
+macOS에서 "확인되지 않은 개발자" 안내가 보일 수 있습니다. 이 경우 시스템 설정의 개인정보 보호 및 보안 메뉴에서 실행을 허용하면 됩니다.
 
 ## 업데이트 방법
 
