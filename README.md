@@ -13,9 +13,10 @@ https://github.com/agentdh/VONA_PixelMix/releases/latest
 
 개발버전 스냅샷은 아래 링크에서 받을 수 있습니다.
 
-https://github.com/agentdh/VONA_PixelMix/releases/tag/v1.0.4_1
+https://github.com/agentdh/VONA_PixelMix_snapshot/releases/latest
 
-스냅샷은 작업 중인 수정사항을 빠르게 확인하기 위한 개발버전입니다. 정식 최신 릴리즈가 `1.0.4`라면 첫 번째 스냅샷은 `1.0.4_1`, 다음 스냅샷은 `1.0.4_2`처럼 올라갑니다. 정식 최신 릴리즈가 `1.0.5`로 바뀌면 이후 스냅샷은 `1.0.5_1`부터 다시 시작합니다.
+스냅샷은 작업 중인 수정사항을 빠르게 확인하기 위한 개발버전입니다.
+정식 최신 릴리즈가 `1.0.0`이라면 스냅샷은 `1.0.0_1` ...처럼 올라갑니다.
 
 ## 튜토리얼
 
