@@ -3,381 +3,180 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VONA PixelMix 사용법 가이드</title>
+<title>VONA PixelMix 최신 사용 가이드</title>
 <style>
-  :root {
-    --bg: #040B14;
-    --bg2: #080F1A;
-    --bg3: #0D1826;
-    --border: rgba(255,255,255,0.06);
-    --border2: rgba(255,255,255,0.10);
-    --text: #E2E8F0;
-    --muted: #64748B;
-    --faint: #1E293B;
-    --indigo: #6366F1;
-    --indigo-dim: rgba(99,102,241,0.15);
-    --indigo-border: rgba(99,102,241,0.35);
-    --emerald: #10B981;
-    --emerald-dim: rgba(16,185,129,0.12);
-    --amber: #F59E0B;
-    --rose: #F43F5E;
-    --sky: #38BDF8;
-    --font-sans: 'Segoe UI', 'Malgun Gothic', sans-serif;
-    --font-mono: 'Consolas', 'D2Coding', monospace;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body { background: var(--bg); color: var(--text); font-family: var(--font-sans); font-size: 14px; line-height: 1.7; }
-  .layout { display: flex; min-height: 100vh; }
-
-  /* ── 사이드바 ── */
-  .sidebar {
-    width: 244px; min-width: 244px; background: var(--bg2); border-right: 1px solid var(--border);
-    position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 24px 0; display: flex; flex-direction: column;
-  }
-  .sidebar-logo { padding: 0 20px 24px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
-  .sidebar-logo h1 { font-family: var(--font-mono); font-size: 20px; font-weight: 900; letter-spacing: -0.5px; color: #fff; }
-  .sidebar-logo span { font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; display: block; margin-top: 2px; }
-  .nav-section { padding: 0 12px; margin-bottom: 8px; }
-  .nav-label { font-size: 9px; font-weight: 900; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); padding: 8px 8px 4px; }
-  .nav-item {
-    display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 8px; color: var(--muted);
-    text-decoration: none; font-size: 12px; font-weight: 600; transition: all 0.15s;
-  }
-  .nav-item:hover { background: var(--faint); color: var(--text); }
-  .nav-item.active { background: var(--indigo-dim); color: var(--indigo); }
-  .nav-icon { font-size: 14px; flex-shrink: 0; }
-
-  /* ── 메인 ── */
-  .main { flex: 1; max-width: 980px; padding: 48px 56px; overflow-x: hidden; }
-  .section { margin-bottom: 80px; scroll-margin-top: 32px; opacity: 0; transform: translateY(18px); transition: opacity .45s, transform .45s; }
-  .section.visible { opacity: 1; transform: translateY(0); }
-
-  /* 제목 — 픽셀 점 3개를 padding-left로 밀어서 겹침 방지 */
-  .section-title {
-    font-size: 22px; font-weight: 900; letter-spacing: -0.5px; color: #fff; margin-bottom: 8px;
-    display: flex; align-items: center; gap: 10px; position: relative; padding-left: 52px;
-  }
-  .section-title::before {
-    content: ""; position: absolute; left: 0;
-    width: 14px; height: 14px; background: var(--indigo);
-    box-shadow: 18px 0 0 var(--emerald), 36px 0 0 var(--amber);
-    image-rendering: pixelated;
-    opacity: 0; transform: translateX(-8px); transition: transform .45s, opacity .45s;
-  }
-  .section.visible .section-title::before { transform: translateX(0); opacity: 1; }
-  .section-title .badge {
-    font-size: 9px; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; padding: 3px 8px;
-    border-radius: 4px; background: var(--indigo-dim); color: var(--indigo); border: 1px solid var(--indigo-border);
-  }
-  .section-desc { color: var(--muted); font-size: 13px; margin-bottom: 24px; line-height: 1.7; }
-  h3 { font-size: 14px; font-weight: 700; color: #fff; margin: 24px 0 8px; }
-  p { color: var(--muted); margin-bottom: 12px; line-height: 1.75; }
-
-  /* ── 히어로 ── */
-  .hero {
-    background: linear-gradient(135deg, rgba(99,102,241,0.12) 0%, rgba(16,185,129,0.06) 100%);
-    border: 1px solid var(--indigo-border); border-radius: 16px; padding: 32px; margin-bottom: 48px;
-  }
-  .hero-label { font-family: var(--font-mono); font-size: 10px; font-weight: 900; letter-spacing: 0.2em; text-transform: uppercase; color: var(--indigo); margin-bottom: 12px; }
-  .hero h1 { font-family: var(--font-mono); font-size: 32px; font-weight: 900; color: #fff; letter-spacing: -0.8px; line-height: 1.15; }
-  .hero p { color: #94A3B8; font-size: 14px; margin-top: 10px; margin-bottom: 0; max-width: 720px; }
-
-  /* ── 카드 / 그리드 ── */
-  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 12px; }
-  .card-title { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
-  .card p { margin-bottom: 0; font-size: 13px; }
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-
-  /* ── 탭 배지 ── */
-  .tab-badge {
-    display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px;
-    border-radius: 6px; font-size: 11px; font-weight: 700; border: 1px solid;
-  }
-  .tab-assembly { background: rgba(99,102,241,0.12); color: #818CF8; border-color: rgba(99,102,241,0.3); }
-  .tab-library  { background: rgba(16,185,129,0.10); color: #34D399; border-color: rgba(16,185,129,0.3); }
-  .tab-priority { background: rgba(245,158,11,0.10); color: #FCD34D; border-color: rgba(245,158,11,0.3); }
-  .tab-shading  { background: rgba(244,63,94,0.10);  color: #FB7185; border-color: rgba(244,63,94,0.3); }
-  .tab-studio   { background: rgba(56,189,248,0.10); color: #7DD3FC; border-color: rgba(56,189,248,0.3); }
-
-  /* ── 콜아웃 ── */
-  .callout {
-    border-radius: 10px; padding: 14px 18px; margin: 16px 0; font-size: 13px; line-height: 1.65;
-    border-left: 3px solid; display: flex; gap: 12px; align-items: flex-start;
-  }
-  .callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
-  .callout-content { flex: 1; color: #94A3B8; }
-  .callout-content strong { display: block; margin-bottom: 4px; font-size: 12px; font-weight: 700; color: #fff; }
-  .callout.info    { background: rgba(56,189,248,0.07);  border-color: var(--sky); }
-  .callout.tip     { background: rgba(16,185,129,0.07);  border-color: var(--emerald); }
-  .callout.warning { background: rgba(245,158,11,0.08);  border-color: var(--amber); }
-
-  /* ── 기타 ── */
-  kbd {
-    background: var(--bg3); border: 1px solid var(--border2); border-radius: 4px; padding: 2px 6px;
-    font-family: var(--font-mono); font-size: 11px; color: var(--text); white-space: nowrap;
-  }
-  .flow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 16px 0; font-size: 12px; font-weight: 700; }
-  .flow-box { background: var(--bg3); border: 1px solid var(--border2); border-radius: 6px; padding: 6px 12px; color: var(--text); }
-  .flow-arrow { color: var(--muted); font-size: 14px; }
-  .mini-table { width: 100%; border-collapse: collapse; overflow: hidden; border-radius: 10px; border: 1px solid var(--border); margin: 12px 0; }
-  .mini-table th, .mini-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; font-size: 12px; }
-  .mini-table th { background: var(--bg3); color: #fff; }
-  .mini-table td { color: #94A3B8; background: rgba(8,15,26,.55); }
-  .mini-table tr:last-child td { border-bottom: 0; }
-  .tool-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin: 12px 0; }
-  .tool-item { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; }
-  .tool-item .icon { font-size: 20px; display: block; margin-bottom: 4px; }
-  .tool-item .name { font-size: 11px; font-weight: 700; color: #fff; }
-  .tool-item .key  { font-size: 10px; color: var(--muted); margin-top: 2px; }
-  .steps { counter-reset: step; list-style: none; padding: 0; }
-  .steps li { counter-increment: step; display: flex; gap: 16px; margin-bottom: 16px; align-items: flex-start; }
-  .steps li::before {
-    content: counter(step); background: var(--indigo-dim); border: 1px solid var(--indigo-border); color: var(--indigo);
-    font-size: 11px; font-weight: 900; width: 24px; height: 24px; border-radius: 6px; display: flex;
-    align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
-  }
-  .steps li p { margin: 0; font-size: 13px; color: #94A3B8; }
-  .steps li strong { color: #fff; }
-  .check-item { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; }
-  .check-item input { margin-top: 5px; accent-color: var(--indigo); }
-  .check-item span { color: #94A3B8; font-size: 13px; }
-  @media (max-width: 900px) {
-    .sidebar { display: none; }
-    .main { padding: 24px 20px; max-width: 100%; }
-    .grid-2, .grid-3 { grid-template-columns: 1fr; }
-    .tool-grid { grid-template-columns: 1fr 1fr; }
-    .section-title { padding-left: 0; }
-    .section-title::before { display: none; }
-  }
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+:root{--bg:#040b14;--panel:#080f1a;--panel2:#0d1826;--line:rgba(255,255,255,.08);--text:#e8edf5;--muted:#8b9aaf;--indigo:#4f6af0;--emerald:#22d3a0;--gold:#f0c040;--rose:#f43f5e;--sky:#38bdf8;--sans:'Segoe UI','Malgun Gothic',sans-serif;--mono:'Consolas','D2Coding',monospace}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.7}.layout{display:flex;min-height:100vh}.sidebar{position:sticky;top:0;width:244px;min-width:244px;height:100vh;padding:24px 12px;background:var(--panel);border-right:1px solid var(--line);overflow-y:auto}.logo{padding:0 8px 22px;margin-bottom:14px;border-bottom:1px solid var(--line)}.logo h1{font:900 20px var(--mono);color:#fff}.logo span{font-size:10px;color:var(--muted);letter-spacing:.14em}.nav-label{padding:10px 8px 4px;font-size:9px;font-weight:900;color:#617087;letter-spacing:.14em}.nav-item{display:flex;gap:9px;align-items:center;padding:8px;border-radius:7px;color:var(--muted);font-size:12px;font-weight:700;text-decoration:none;transition:.15s}.nav-item:hover,.nav-item.active{background:rgba(79,106,240,.14);color:#9eacff}.main{width:100%;max-width:1020px;padding:48px 56px}.hero{padding:30px;margin-bottom:52px;border:1px solid rgba(79,106,240,.4);border-radius:8px;background:#08111f}.hero-label{font:900 10px var(--mono);color:#8293ff;letter-spacing:.18em}.hero h1{margin-top:8px;font:900 32px/1.2 var(--mono);color:#fff}.hero p{max-width:760px;margin-top:10px;color:#a7b4c7}.section{margin-bottom:76px;scroll-margin-top:24px;opacity:0;transform:translateY(14px);transition:.4s}.section.visible{opacity:1;transform:none}.section-title{display:flex;align-items:center;gap:10px;margin-bottom:8px;color:#fff;font-size:22px;font-weight:900}.section-title:before{content:'';width:13px;height:13px;background:var(--indigo);box-shadow:17px 0 var(--emerald),34px 0 var(--gold);margin-right:34px;transform:translateX(-25px);opacity:0;transition:.4s}.section.visible .section-title:before{transform:none;opacity:1}.section-desc,p{color:var(--muted)}.section-desc{margin-bottom:22px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.card{padding:18px 20px;background:var(--panel);border:1px solid var(--line);border-radius:8px}.card h3{margin-bottom:5px;color:#fff;font-size:13px}.card p{font-size:13px}.callout{display:flex;gap:11px;margin:16px 0;padding:14px 16px;border-left:3px solid var(--sky);background:rgba(56,189,248,.07);border-radius:6px;color:#9fb0c5}.callout.tip{border-color:var(--emerald);background:rgba(34,211,160,.07)}.callout.warn{border-color:var(--gold);background:rgba(240,192,64,.07)}.callout strong{display:block;color:#fff}.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.flow span{padding:7px 11px;background:var(--panel2);border:1px solid var(--line);border-radius:6px;font-size:12px;font-weight:700}.flow b{color:#64748b}.table{width:100%;margin-top:12px;border-collapse:collapse;border:1px solid var(--line)}.table th,.table td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;font-size:12px}.table th{background:var(--panel2);color:#fff}.table td{color:#a5b3c6}.table tr:last-child td{border-bottom:0}.steps{counter-reset:n;list-style:none}.steps li{display:flex;gap:13px;margin-bottom:14px;color:#a5b3c6}.steps li:before{counter-increment:n;content:counter(n);display:grid;place-items:center;width:24px;height:24px;flex:none;border:1px solid rgba(79,106,240,.45);border-radius:5px;background:rgba(79,106,240,.14);color:#9eacff;font:900 11px var(--mono)}.steps strong{color:#fff}kbd{padding:2px 6px;background:var(--panel2);border:1px solid var(--line);border-radius:4px;color:#dbe4f0;font:11px var(--mono)}.check{display:flex;gap:9px;margin-top:8px;padding:11px 13px;background:var(--panel);border:1px solid var(--line);border-radius:7px;color:#a5b3c6}.check input{accent-color:var(--indigo)}.badge{padding:3px 7px;border:1px solid rgba(79,106,240,.35);border-radius:4px;background:rgba(79,106,240,.12);color:#91a0ff;font-size:9px;letter-spacing:.1em}.hint{font-size:12px;color:#6f8098}.key-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.key-item{padding:11px;text-align:center;background:var(--panel);border:1px solid var(--line);border-radius:7px}.key-item strong{display:block;margin-bottom:4px;color:#fff;font-size:11px}@media(max-width:850px){.sidebar{display:none}.main{padding:25px 18px}.grid,.key-grid{grid-template-columns:1fr}.section-title:before{display:none}.hero h1{font-size:25px}}
 </style>
 </head>
 <body>
 <div class="layout">
 <nav class="sidebar">
-  <div class="sidebar-logo">
-    <h1>PixelMix</h1>
-    <span>스킨 제작 가이드</span>
-  </div>
-  <div class="nav-section">
-    <div class="nav-label">시작하기</div>
-    <a class="nav-item active" href="#overview"><span class="nav-icon">🗺</span>프로그램 개요</a>
-    <a class="nav-item" href="#flow"><span class="nav-icon">🔁</span>기본 작업 흐름</a>
-  </div>
-  <div class="nav-section">
-    <div class="nav-label">탭 설명</div>
-    <a class="nav-item" href="#assembly"><span class="nav-icon">🧩</span>조립 탭</a>
-    <a class="nav-item" href="#studio"><span class="nav-icon">🎨</span>제작실 탭</a>
-    <a class="nav-item" href="#asset"><span class="nav-icon">📦</span>에셋 관리</a>
-    <a class="nav-item" href="#priority"><span class="nav-icon">↕️</span>순서 설정 탭</a>
-    <a class="nav-item" href="#shading"><span class="nav-icon">🌗</span>명암 탭</a>
-  </div>
-  <div class="nav-section">
-    <div class="nav-label">참고</div>
-    <a class="nav-item" href="#save-load"><span class="nav-icon">💾</span>저장/불러오기</a>
-    <a class="nav-item" href="#hotkeys"><span class="nav-icon">⌨️</span>단축키</a>
-    <a class="nav-item" href="#practice"><span class="nav-icon">✅</span>따라하기</a>
-  </div>
+  <div class="logo"><h1>PixelMix</h1><span>최신 사용 가이드</span></div>
+  <div class="nav-label">시작하기</div>
+  <a class="nav-item active" href="#overview">🧭 프로그램 개요</a>
+  <a class="nav-item" href="#flow">🔁 작업 흐름</a>
+  <div class="nav-label">주요 기능</div>
+  <a class="nav-item" href="#studio">✏️ 제작실</a>
+  <a class="nav-item" href="#layers">▤ 레이어와 패턴</a>
+  <a class="nav-item" href="#assembly">🧩 조립</a>
+  <a class="nav-item" href="#color-group">🎨 색상 그룹</a>
+  <a class="nav-item" href="#shading">◐ 명암</a>
+  <a class="nav-item" href="#slots">↕ 슬롯 설정</a>
+  <div class="nav-label">저장과 설정</div>
+  <a class="nav-item" href="#files">💾 저장과 불러오기</a>
+  <a class="nav-item" href="#license">🔒 정규버전 코드</a>
+  <a class="nav-item" href="#hotkeys">⌨ 단축키</a>
+  <a class="nav-item" href="#practice">✓ 따라하기</a>
 </nav>
 
 <main class="main">
-  <div class="hero">
-    <div class="hero-label">Minecraft Skin PixelMix</div>
-    <h1>VONA PixelMix 사용법</h1>
-    <p>슬롯에 스킨을 조립하고, 에셋 라이브러리로 관리하며, 제작실에서 직접 그리고, 명암으로 입체감을 더하는 마인크래프트 스킨 제작 툴입니다. 지금 바로 시작할 수 있도록 탭별 기능과 실전 흐름을 정리했습니다.</p>
-  </div>
+  <header class="hero">
+    <div class="hero-label">MINECRAFT SKIN EDITOR</div>
+    <h1>VONA PixelMix 튜토리얼</h1>
+    <p>3D 프리뷰와 전개도에서 스킨 에셋을 만들고, 부위별 에셋을 조립해 여러 스킨을 제작하는 흐름을 중심으로 설명합니다.</p>
+  </header>
 
-  <!-- 개요 -->
   <section class="section" id="overview">
-    <div class="section-title">프로그램 개요 <span class="badge">v1.0.2</span></div>
-    <p class="section-desc">PixelMix는 조립, 제작실, 에셋 관리, 순서 설정, 명암의 다섯 가지 탭으로 구성됩니다.</p>
-    <div class="grid-3">
-      <div class="card"><div class="card-title">🎯 조립</div><p>여러 슬롯(머리카락·상의·하의 등)에 스킨 에셋을 배치해 최종 스킨을 미리보고 PNG 또는 .skinproj로 내보냅니다.</p></div>
-      <div class="card"><div class="card-title">📦 에셋 관리</div><p>슬롯별 스킨 파일을 라이브러리로 관리합니다. 에셋을 등록하면 조립 탭과 제작실에서 바로 불러올 수 있습니다.</p></div>
-      <div class="card"><div class="card-title">🧩 제작실</div><p>에셋을 선택해 픽셀 단위로 직접 그립니다. 레이어·폴더·다양한 도구를 지원하며 .skinproj로 저장합니다.</p></div>
+    <h2 class="section-title">프로그램 개요 <span class="badge">CURRENT</span></h2>
+    <p class="section-desc">PixelMix는 제작실에서 레이어 기반 에셋을 만들고, 조립 탭에서 슬롯별 에셋을 선택해 완성 스킨을 만드는 편집 도구입니다.</p>
+    <div class="grid">
+      <div class="card"><h3>✏️ 제작</h3><p>전개도와 3D 프리뷰를 보며 직접 그리고, 레이어·패턴·효과를 사용해 에셋을 만듭니다.</p></div>
+      <div class="card"><h3>🧩 조립</h3><p>악세서리, 의상, 신발, 머리카락, 얼굴, 피부 등 슬롯별 에셋을 골라 하나의 스킨으로 합칩니다.</p></div>
+      <div class="card"><h3>🎨 그룹 편집</h3><p>같은 색상 그룹명을 공유하는 레이어만 묶어 색조 조절과 팔레트 치환을 적용합니다.</p></div>
+      <div class="card"><h3>◐ 자동 명암</h3><p>조립된 스킨의 색과 명암 마스크의 알파를 결합해 색조·채도·명도·휘도·불투명도를 조절합니다.</p></div>
     </div>
-    <div class="callout info"><span class="callout-icon">📌</span><div class="callout-content"><strong>기본 흐름 요약</strong>에셋 관리에서 슬롯마다 스킨을 등록 → 조립 탭에서 최종 스킨 미리보기 → 제작실에서 픽셀 편집 → PNG / .skinproj 내보내기. 스킨 모델은 Wide와 Slim으로 구분되므로 등록 시 맞는 모델을 선택하세요.</div></div>
   </section>
 
-  <!-- 흐름 -->
   <section class="section" id="flow">
-    <div class="section-title">기본 작업 흐름</div>
-    <p class="section-desc">처음 사용할 때 아래 순서대로 따라가면 빠르게 시작할 수 있습니다.</p>
-    <div class="flow">
-      <div class="flow-box">🎨 제작실에서 스킨 그리기</div><div class="flow-arrow">→</div>
-      <div class="flow-box">📦 에셋 관리에 등록</div><div class="flow-arrow">→</div>
-      <div class="flow-box">↕️ 순서 설정에서 레이어 순서 조정</div><div class="flow-arrow">→</div>
-      <div class="flow-box">🧩 조립 탭에서 최종 확인</div><div class="flow-arrow">→</div>
-      <div class="flow-box">🌗 명암 적용</div><div class="flow-arrow">→</div>
-      <div class="flow-box">💾 PNG 저장 / .skinproj 내보내기</div>
-    </div>
+    <h2 class="section-title">권장 작업 흐름</h2>
+    <p class="section-desc">처음에는 아래 순서를 따라가면 제작과 조립의 관계를 빠르게 익힐 수 있습니다.</p>
+    <div class="flow"><span>에셋 선택 또는 생성</span><b>→</b><span>제작실 편집</span><b>→</b><span>에셋 저장</span><b>→</b><span>슬롯 설정 확인</span><b>→</b><span>조립</span><b>→</b><span>명암 적용</span><b>→</b><span>내보내기</span></div>
   </section>
 
-  <!-- 조립 탭 -->
-  <section class="section" id="assembly">
-    <div class="section-title"><span class="tab-badge tab-assembly">🧩 조립</span> 조립 탭</div>
-    <p class="section-desc">조립 탭에서는 각 슬롯에 에셋을 배치해 최종 스킨을 완성합니다. 3D 미리보기로 실시간 확인이 가능합니다.</p>
-    <div class="grid-2">
-      <div class="card"><div class="card-title">📂 슬롯 구성</div><p>악세서리·세트의상·상의·하의·신발·머리카락·얼굴·피부 순으로 슬롯이 배치됩니다. 슬롯 설정 탭에서 순서와 공유 여부를 변경할 수 있습니다.</p></div>
-      <div class="card"><div class="card-title">🎯 스킨 선택</div><p>각 슬롯에서 등록된 에셋을 선택합니다. Wide·Slim 모델별로 별도 선택이 가능하며 동시에 표시됩니다.</p></div>
-      <div class="card"><div class="card-title">🖼️ 미리보기</div><p>선택된 에셋들이 2D 전개도와 3D 프리뷰에서 합성되어 표시됩니다. Wide·Slim 공유 슬롯은 하나의 이미지가 두 모델에 모두 적용됩니다.</p></div>
-      <div class="card"><div class="card-title">🌗 명암 적용</div><p>명암 탭에서 등록한 명암 설정이 조립 스킨에 실시간으로 반영됩니다.</p></div>
-    </div>
-    <h3>조립 탭 저장 옵션</h3>
-    <p>조립 탭에서 .skinproj 내보내기와 PNG 저장 버튼이 나란히 배치되어 있습니다. .skinproj는 슬롯 구성 정보를 포함하며, PNG는 현재 전개도에 표시된 합성 결과를 저장합니다.</p>
-    <div class="callout warning"><span class="callout-icon">⚠️</span><div class="callout-content"><strong>조립 탭 저장 시 주의</strong>조립 탭의 .skinproj를 제작실에서 불러오면 슬롯 구조만 레이어로 가져오며, 명암 설정은 포함되지 않습니다.</div></div>
-  </section>
-
-  <!-- 제작실 탭 -->
   <section class="section" id="studio">
-    <div class="section-title"><span class="tab-badge tab-studio">🎨 제작실</span> 제작실 탭</div>
-    <p class="section-desc">제작실은 픽셀 단위로 스킨을 직접 그리는 편집기입니다. 에셋을 선택해야 편집이 활성화됩니다.</p>
-
-    <div class="callout warning"><span class="callout-icon">🔒</span><div class="callout-content"><strong>에셋 선택 후 편집 가능</strong>프로그램을 처음 실행하거나 재시작하면 제작실은 잠금 상태입니다. 좌측 패널에서 에셋을 선택해야 레이어 편집과 모든 도구가 활성화됩니다.</div></div>
-
-    <div class="grid-2">
-      <div class="card"><div class="card-title">📐 레이아웃</div><p>기본 레이아웃은 좌측 전개도 · 우측 3D 프리뷰입니다. 상단 프리뷰 조정 버튼으로 배치를 바꿀 수 있습니다. 도구 선택 패널은 프리뷰 조정 바 아래에 위치합니다.</p></div>
-      <div class="card"><div class="card-title">🖊️ 도구 선택</div><p>연필·지우개·직선·영역·도장·연결채우기 여섯 가지 도구를 지원합니다. 각 도구에 단축키가 지정되어 있습니다.</p></div>
-      <div class="card"><div class="card-title">📑 레이어</div><p>레이어 추가, 폴더 추가, 드래그로 순서 변경, 우클릭으로 복제·삭제·아래 레이어와 합치기가 가능합니다. 폴더를 드래그해서 레이어를 폴더 안으로 이동할 수 있습니다.</p></div>
-      <div class="card"><div class="card-title">🗑️ 레이어 지우기</div><p>편집 버튼(✨)과 ADV 버튼 사이의 🗑️ 버튼을 누르면 레이어 내용만 초기화됩니다. 레이어 자체는 유지됩니다.</p></div>
-      <div class="card"><div class="card-title">🖼️ 마네킹 제어</div><p>우측 패널에서 마네킹 활성/비활성, 이미지 업로드, 불투명도를 설정할 수 있습니다. 마네킹은 참조용으로만 사용되며 PNG 저장에는 포함되지 않습니다.</p></div>
-      <div class="card"><div class="card-title">🧱 파츠 표시</div><p>우측 패널 상단의 파츠 표시 패널에서 모자·갑옷·팔갑옷 등 각 파트를 개별적으로 켜고 끌 수 있습니다.</p></div>
+    <h2 class="section-title">제작실</h2>
+    <p class="section-desc">제작실은 하나의 에셋을 레이어 단위로 편집하는 공간입니다. 먼저 에셋 관리에서 작업할 에셋을 선택해야 편집 도구가 활성화됩니다.</p>
+    <div class="grid">
+      <div class="card"><h3>📁 에셋 관리</h3><p>새 프리셋을 만들거나 기존 에셋을 선택해 제작실로 불러옵니다. 선택된 에셋이 없으면 저장 버튼과 편집 기능은 조용히 비활성화됩니다.</p></div>
+      <div class="card"><h3>🗺 전개도 편집</h3><p>연필, 지우개, 직선, 영역 채우기, 연결 색상 채우기, 도장 도구를 사용합니다. 휠 또는 지정된 이동 조작으로 화면을 이동하고 확대할 수 있습니다.</p></div>
+      <div class="card"><h3>🧍 3D 직접 편집</h3><p>3D 그리기 모드를 켜면 선택한 레이어의 보이는 부위를 직접 그릴 수 있습니다. 우클릭은 모델 회전에 사용되며 도구 미리보기도 3D 표면에 표시됩니다.</p></div>
+      <div class="card"><h3>🧰 패널 배치</h3><p>패널은 헤더를 누르고 드래그할 때만 이동합니다. 색상환과 패턴 제작 패널은 하나의 영역으로 묶여 높이를 조절할 수 있습니다.</p></div>
     </div>
-
-    <h3>우측 패널 구성 (위→아래)</h3>
-    <table class="mini-table">
-      <thead><tr><th>패널</th><th>기능</th></tr></thead>
-      <tbody>
-        <tr><td>파츠 표시</td><td>3D·전개도에서 표시할 신체 파트 개별 토글</td></tr>
-        <tr><td>마네킹 제어</td><td>참조용 마네킹 이미지 설정 및 불투명도 조절</td></tr>
-        <tr><td>레이어 목록</td><td>레이어·폴더 추가, 드래그 정렬, 편집/지우기/ADV, 우클릭 메뉴</td></tr>
-        <tr><td>패턴 제작</td><td>현재 레이어에서 패턴 생성 및 적용</td></tr>
-        <tr><td>컬러</td><td>색상 피커 (RGBA / HSVA)</td></tr>
-      </tbody>
-    </table>
-
-    <div class="callout tip"><span class="callout-icon">💡</span><div class="callout-content"><strong>레이어 편집기(✨)</strong>편집 버튼을 누르면 정밀 편집기가 열립니다. 영역 선택·채우기·색 선택 도구와 Hue·Brightness·Contrast 보정, 레이어 효과(일반·곱하기·오버레이·발광)를 적용할 수 있습니다. 폴더에서 편집을 열면 영역·채우기·색 선택 도구는 표시되지 않습니다.</div></div>
+    <div class="callout tip"><span>💡</span><div><strong>에셋을 먼저 선택하세요</strong>프로그램을 다시 실행하면 제작실은 에셋 미선택 상태로 시작합니다. 에셋을 선택하기 전에는 전개도, 3D 그리기, 레이어 추가·삭제와 효과 조작이 적용되지 않습니다.</div></div>
   </section>
 
-  <!-- 에셋 관리 -->
-  <section class="section" id="asset">
-    <div class="section-title"><span class="tab-badge tab-library">📦 에셋 관리</span> 에셋 관리 창</div>
-    <p class="section-desc">에셋 관리 창에서 슬롯별로 스킨 파일을 등록하고 관리합니다.</p>
-    <div class="grid-2">
-      <div class="card"><div class="card-title">📁 에셋 등록</div><p>폴더별로 에셋을 분류하고 이름·아이콘을 지정합니다. 등록된 에셋은 조립 탭에서 즉시 선택 가능합니다.</p></div>
-      <div class="card"><div class="card-title">⭐ 즐겨찾기</div><p>자주 쓰는 에셋은 즐겨찾기로 등록해 빠르게 접근할 수 있습니다.</p></div>
-      <div class="card"><div class="card-title">📤 불러오기</div><p>PNG, JSON, .skinproj 파일을 가져올 수 있습니다. .skinproj는 레이어 구조까지 복원되며, 조립 탭 .skinproj는 슬롯 선택 정보를 불러옵니다.</p></div>
-      <div class="card"><div class="card-title">🖥️ 편집 연동</div><p>에셋 편집 버튼을 누르면 해당 에셋이 제작실에 로드되어 바로 편집할 수 있습니다.</p></div>
+  <section class="section" id="layers">
+    <h2 class="section-title">레이어와 패턴</h2>
+    <div class="grid">
+      <div class="card"><h3>▤ 레이어 목록</h3><p>레이어 추가·삭제, 표시, 순서 변경, 폴더 정리, 편집과 ADV 설정을 관리합니다. 지우기 버튼은 해당 레이어의 내용을 비웁니다.</p></div>
+      <div class="card"><h3>◫ 클리핑</h3><p>클리핑된 레이어는 바로 아래 레이어의 불투명 영역 안에서만 보입니다.</p></div>
+      <div class="card"><h3>✨ 레이어 효과</h3><p>일반, 곱하기, 오버레이, 발광 효과를 선택하고 색조·채도·명도를 조절할 수 있습니다.</p></div>
+      <div class="card"><h3>🧱 패턴 제작</h3><p>선택 레이어에서 패턴을 만들고 X/Y 복제 수, 간격, 이동, 개별 회전과 전체 회전을 조절합니다.</p></div>
+    </div>
+    <div class="callout"><span>🎨</span><div><strong>패턴 팔레트 치환</strong>패턴 색상 칸을 더블클릭하면 색상 치환 패널이 열립니다. 색상을 변경하거나 패널의 변경 초기화 버튼으로 해당 색상만 원래대로 돌릴 수 있습니다.</div></div>
+  </section>
+
+  <section class="section" id="assembly">
+    <h2 class="section-title">조립 탭</h2>
+    <p class="section-desc">제작실에서 저장한 에셋을 슬롯별로 선택해 하나의 스킨을 만드는 화면입니다.</p>
+    <div class="grid">
+      <div class="card"><h3>🧩 슬롯 선택</h3><p>각 슬롯에서 사용할 에셋을 선택하면 전개도와 3D 프리뷰에 즉시 반영됩니다. 다중 선택을 지원하는 슬롯은 여러 에셋을 함께 사용할 수 있습니다.</p></div>
+      <div class="card"><h3>↕ 합성 순서</h3><p>슬롯 설정의 순서와 에셋의 겹침 설정에 따라 최종 합성 순서가 결정됩니다.</p></div>
+      <div class="card"><h3>🎨 색상 그룹</h3><p>현재 조립에 포함된 색상 그룹을 편집합니다. 결과는 해당 그룹 레이어가 포함된 슬롯에만 나타납니다.</p></div>
+      <div class="card"><h3>💾 스킨 저장</h3><p>PNG는 완성 이미지로, 조립용 .skinproj는 슬롯 선택·순서·공유·명암 설정을 포함한 프로젝트로 저장합니다.</p></div>
     </div>
   </section>
 
-  <!-- 순서 설정 -->
-  <section class="section" id="priority">
-    <div class="section-title"><span class="tab-badge tab-priority">↕️ 순서</span> 순서 설정 탭</div>
-    <p class="section-desc">순서 설정 탭에서는 슬롯의 합성 순서를 조절합니다. 위쪽 슬롯일수록 최종 스킨에서 위에 그려집니다.</p>
-    <table class="mini-table">
-      <thead><tr><th>항목</th><th>설명</th></tr></thead>
-      <tbody>
-        <tr><td>기본 슬롯 순서</td><td>악세서리→세트의상→상의→하의→신발→머리카락→얼굴→피부 (위에서 아래로)</td></tr>
-        <tr><td>공유 슬롯</td><td>하의·신발·머리카락·얼굴은 기본적으로 Wide/Slim 공유가 활성화됩니다.</td></tr>
-        <tr><td>폴더/에셋 순서</td><td>슬롯 안에서 에셋 우선순위를 드래그로 조정할 수 있습니다.</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <!-- 명암 탭 -->
-  <section class="section" id="shading">
-    <div class="section-title"><span class="tab-badge tab-shading">🌗 명암</span> 명암 탭</div>
-    <p class="section-desc">명암 탭은 조립된 스킨에 명암 파일을 합성해 입체감을 더합니다.</p>
-    <div class="grid-2">
-      <div class="card"><div class="card-title">🖼️ 명암 파일 등록</div><p>Wide·Slim 모델별로 명암 가이드 이미지를 등록합니다. 밝은 영역일수록 강하게 적용됩니다.</p></div>
-      <div class="card"><div class="card-title">📂 명암 프리셋</div><p>명암 파일을 활성화하면 조립 스킨(A) 위에 명암(B)이 클리핑되어 합성됩니다.</p></div>
-      <div class="card"><div class="card-title">🎨 색조 보정</div><p>Hue Shift·밝기·Luminance를 조절해 명암의 색감을 변경할 수 있습니다.</p></div>
-      <div class="card"><div class="card-title">✨ 블렌드 모드</div><p>곱하기·오버레이·발광을 활성화해 명암의 합성 방식을 선택합니다. 여러 개 동시 적용 가능합니다.</p></div>
-    </div>
-    <div class="callout info"><span class="callout-icon">🧩</span><div class="callout-content"><strong>명암 합성 구조</strong>명암 파일 B를 마스크로 스킨 A를 클리핑 → Hue·Brightness·Luminance 보정 적용 → 곱하기·오버레이·발광 블렌드로 A 위에 합성. 명암 파일이 여러 개일 경우 각각 독립적으로 처리 후 누적 합성됩니다.</div></div>
-  </section>
-
-  <!-- 저장과 불러오기 -->
-  <section class="section" id="save-load">
-    <div class="section-title">저장과 불러오기</div>
-    <p class="section-desc">PixelMix는 PNG와 .skinproj 두 가지 형식을 사용합니다.</p>
-    <table class="mini-table">
-      <thead><tr><th>형식</th><th>저장 위치</th><th>내용</th></tr></thead>
-      <tbody>
-        <tr><td>PNG</td><td>조립 / 제작실</td><td>현재 전개도에 표시된 레이어 합산 결과. 마네킹은 포함되지 않습니다.</td></tr>
-        <tr><td>제작실 .skinproj</td><td>제작실</td><td>레이어 구조·내용·설정 전체를 보존합니다.</td></tr>
-        <tr><td>조립 .skinproj</td><td>조립 탭</td><td>슬롯 선택 구성, 명암 설정, 순서를 포함합니다.</td></tr>
-      </tbody>
-    </table>
-    <div class="callout tip"><span class="callout-icon">📌</span><div class="callout-content"><strong>버튼 위치</strong>조립 탭의 .skinproj 내보내기와 PNG 저장 버튼은 나란히 반반 크기로 배치되어 있습니다. 제작실의 PNG 저장은 좌측 패널 상단에 위치합니다.</div></div>
-  </section>
-
-  <!-- 단축키 -->
-  <section class="section" id="hotkeys">
-    <div class="section-title">단축키</div>
-    <p class="section-desc">제작실에서 자주 쓰는 단축키입니다.</p>
-    <div class="tool-grid">
-      <div class="tool-item"><span class="icon">↩</span><div class="name">실행 취소</div><div class="key"><kbd>Ctrl</kbd> + <kbd>Z</kbd></div></div>
-      <div class="tool-item"><span class="icon">↪</span><div class="name">다시 실행</div><div class="key"><kbd>Ctrl</kbd> + <kbd>Y</kbd></div></div>
-      <div class="tool-item"><span class="icon">🖊️</span><div class="name">연필</div><div class="key"><kbd>Q</kbd></div></div>
-      <div class="tool-item"><span class="icon">🧽</span><div class="name">지우개</div><div class="key"><kbd>W</kbd></div></div>
-      <div class="tool-item"><span class="icon">📏</span><div class="name">직선</div><div class="key"><kbd>E</kbd></div></div>
-      <div class="tool-item"><span class="icon">⬛</span><div class="name">영역 채우기</div><div class="key"><kbd>R</kbd></div></div>
-      <div class="tool-item"><span class="icon">🧱</span><div class="name">도장</div><div class="key"><kbd>T</kbd></div></div>
-      <div class="tool-item"><span class="icon">🪣</span><div class="name">연결 채우기</div><div class="key"><kbd>F</kbd></div></div>
-      <div class="tool-item"><span class="icon">📋</span><div class="name">도장 복사 모드</div><div class="key"><kbd>Shift</kbd></div></div>
-      <div class="tool-item"><span class="icon">−</span><div class="name">브러시 크기 감소</div><div class="key"><kbd>1</kbd></div></div>
-      <div class="tool-item"><span class="icon">＋</span><div class="name">브러시 크기 증가</div><div class="key"><kbd>2</kbd></div></div>
-      <div class="tool-item"><span class="icon">🧽</span><div class="name">지우개 토글</div><div class="key"><kbd>X</kbd></div></div>
-    </div>
-    <div class="callout info"><span class="callout-icon">🖥️</span><div class="callout-content"><strong>마우스 조작</strong>우클릭 드래그로 패닝, Ctrl+우클릭으로 스포이드, Ctrl+클릭(도장 제외)으로 면 잠금 모드가 활성화됩니다. Ctrl을 누른 채로 연결채우기를 하면 채울 영역을 초록 오버레이로 미리 확인할 수 있습니다.</div></div>
-  </section>
-
-  <!-- 따라하기 -->
-  <section class="section" id="practice">
-    <div class="section-title">따라하기 체크리스트</div>
-    <p class="section-desc">아래 순서대로 따라하면 처음 사용자도 빠르게 PixelMix에 익숙해질 수 있습니다.</p>
+  <section class="section" id="color-group">
+    <h2 class="section-title">색상 그룹 편집</h2>
+    <p class="section-desc">같은 색상 그룹명을 가진 레이어들만 하나의 편집 대상으로 묶습니다.</p>
     <ol class="steps">
-      <li><p><strong>제작실 탭을 열고 에셋을 선택합니다.</strong> 에셋 관리에서 편집할 에셋을 선택하면 잠금이 해제되어 레이어 편집이 활성화됩니다.</p></li>
-      <li><p><strong>제작실에서 스킨을 그립니다.</strong> 레이어를 추가하고 도구를 선택해 픽셀을 그립니다. 편집이 끝나면 .skinproj로 내보내거나 에셋 저장으로 반영합니다.</p></li>
-      <li><p><strong>레이어 기능을 활용합니다.</strong> 레이어 우클릭으로 복제·삭제·합치기, 편집(✨)·🗑️·ADV 버튼을 사용해보세요.</p></li>
-      <li><p><strong>조립 탭에서 슬롯에 에셋을 배치합니다.</strong> 3D 프리뷰로 전체 스킨을 확인하고 .skinproj 또는 PNG로 내보냅니다.</p></li>
-      <li><p><strong>명암 탭을 활용합니다.</strong> 명암 파일을 등록하고 Hue·밝기·블렌드 모드를 조절해 입체감 있는 스킨을 완성합니다.</p></li>
-      <li><p><strong>최종 파일을 저장합니다.</strong> 완성 후 PNG 저장으로 스킨을 내보내고, 조립 탭 .skinproj로 전체 구성을 백업합니다.</p></li>
+      <li><div><strong>그룹 선택</strong><br>조립 탭의 색상 그룹 목록에서 편집할 그룹명을 선택합니다.</div></li>
+      <li><div><strong>중복 색상 통합</strong><br>그룹에 포함된 모든 선택 에셋의 레이어 색상을 수집하며, 같은 색상은 팔레트에 한 번만 표시합니다.</div></li>
+      <li><div><strong>더블클릭 치환</strong><br>팔레트 색상을 더블클릭해 색상 치환 패널을 열고 새 색상을 지정합니다. 변경 초기화로 해당 색상만 복원할 수 있습니다.</div></li>
+      <li><div><strong>그룹 범위 적용</strong><br>같은 원본 색상이 다른 그룹이나 그룹이 없는 레이어에 있어도 변경되지 않습니다. 현재 그룹을 사용하는 슬롯의 결과만 바뀝니다.</div></li>
     </ol>
-    <div class="check-item"><input type="checkbox"><span>제작실에서 에셋을 선택해 레이어 편집이 활성화되는지 확인했다.</span></div>
-    <div class="check-item"><input type="checkbox"><span>레이어 추가·우클릭 메뉴·🗑️ 지우기 버튼을 사용해봤다.</span></div>
-    <div class="check-item"><input type="checkbox"><span>조립 탭에서 슬롯에 에셋을 배치하고 .skinproj와 PNG 내보내기를 해봤다.</span></div>
-    <div class="check-item"><input type="checkbox"><span>명암 탭에서 명암 파일을 등록하고 블렌드 모드를 적용해봤다.</span></div>
+  </section>
+
+  <section class="section" id="shading">
+    <h2 class="section-title">명암 시스템</h2>
+    <p class="section-desc">명암 탭에서 등록한 마스크를 조립 탭의 명암 레이어 설정에서 활성화합니다.</p>
+    <div class="grid">
+      <div class="card"><h3>◐ 명암 마스크</h3><p>명암 파일 B의 알파 모양에 조립 스킨 A의 색을 넣어 C 명암 레이어를 만듭니다. C는 A 위의 최상단에 적용됩니다.</p></div>
+      <div class="card"><h3>☀ 속성 조절</h3><p>색조, 채도, 명도, 휘도, 불투명도는 B나 A 하나가 아니라 완성된 C 명암 레이어 전체에 적용됩니다.</p></div>
+      <div class="card"><h3>✦ 블렌딩</h3><p>곱하기, 오버레이, 발광을 켜면 C 레이어에 해당 효과가 적용됩니다.</p></div>
+      <div class="card"><h3>▣ 일반 레이어 유지</h3><p>세 블렌딩 효과를 모두 꺼도 명암이 사라지지 않습니다. 조절값이 적용된 C가 일반 레이어로 최상단에 남습니다.</p></div>
+    </div>
+  </section>
+
+  <section class="section" id="slots">
+    <h2 class="section-title">슬롯 설정</h2>
+    <p class="section-desc">기본 합성 순서는 악세서리 → 세트의상 → 상의 → 하의 → 신발 → 머리카락 → 얼굴 → 피부입니다.</p>
+    <table class="table"><thead><tr><th>설정</th><th>역할</th></tr></thead><tbody>
+      <tr><td>순서</td><td>앞쪽 슬롯이 최종 합성에서 더 위에 보이도록 순서를 정리합니다.</td></tr>
+      <tr><td>공유</td><td>Wide와 Slim 모델에서 같은 선택을 공유합니다. 기본 공유 슬롯은 하의, 신발, 머리카락, 얼굴입니다.</td></tr>
+      <tr><td>겹침 설정</td><td>특정 레이어를 최상단으로 올리는 등 에셋 간 비정상적인 겹침을 방지합니다.</td></tr>
+    </tbody></table>
+  </section>
+
+  <section class="section" id="files">
+    <h2 class="section-title">저장과 불러오기</h2>
+    <table class="table"><thead><tr><th>형식</th><th>용도</th></tr></thead><tbody>
+      <tr><td>PNG</td><td>완성된 스킨 이미지 또는 한 장의 레이어로 가져올 이미지입니다.</td></tr>
+      <tr><td>제작실 .skinproj</td><td>레이어, 폴더, 패턴, 색상과 효과 등 제작실 편집 구조를 저장합니다.</td></tr>
+      <tr><td>조립 .skinproj</td><td>슬롯 조합, 순서, 공유 설정과 명암 설정을 저장합니다. 제작실로 가져오면 슬롯 합성 구조만 레이어로 변환되며 명암 구조는 제외됩니다.</td></tr>
+      <tr><td>기존 JSON</td><td>이전 버전 파일을 불러오기 위한 호환 형식입니다. 새 작업은 .skinproj 사용을 권장합니다.</td></tr>
+    </tbody></table>
+    <div class="callout tip"><span>📂</span><div><strong>없는 슬롯 자동 복원</strong>조립 프로젝트를 불러올 때 저장 당시 사용한 슬롯이 현재 없다면, 필요한 슬롯을 목록의 가장 아래에 자동으로 추가합니다.</div></div>
+  </section>
+
+  <section class="section" id="license">
+    <h2 class="section-title">정규버전 코드 입력</h2>
+    <p class="section-desc">처음 설치하면 PIXELMIX(beta) 상태로 시작합니다. 설정 탭의 정규버전 코드 입력란에 유효한 코드를 입력하면 잠금이 해제되고, 재실행 후에도 상태가 유지됩니다. 설정에서 다시 잠글 수 있습니다.</p>
+    <table class="table"><thead><tr><th>항목</th><th>코드 입력 후 해제되는 제한</th></tr></thead><tbody>
+      <tr><td>슬롯 관리</td><td>폴더와 슬롯 생성 기능을 사용할 수 있고 파일 시스템 변경도 프로그램에 반영됩니다.</td></tr>
+      <tr><td>패턴 편집</td><td>X/Y 복제 수 제한, 복제 간격 제한과 개별 타일 회전 잠금이 해제됩니다.</td></tr>
+      <tr><td>명암 탭</td><td>프로그램 안에서 명암 파일을 추가·교체·제거할 수 있습니다.</td></tr>
+      <tr><td>조립 명암</td><td>명도와 휘도를 100% 이외의 값으로 조절할 수 있습니다.</td></tr>
+      <tr><td>제작실 레이어</td><td>5개를 넘는 레이어를 사용할 수 있습니다.</td></tr>
+      <tr><td>조립 프로젝트</td><td>조립 결과를 단일 레이어가 아닌 슬롯별 구조로 보존할 수 있습니다.</td></tr>
+    </tbody></table>
+    <div class="callout warn"><span>🔐</span><div><strong>코드는 별도로 제공됩니다</strong>이 가이드에는 정규버전 코드 또는 비밀번호를 기재하지 않습니다. 제공받은 유효한 코드만 설정 화면에 입력하세요.</div></div>
+  </section>
+
+  <section class="section" id="hotkeys">
+    <h2 class="section-title">기본 단축키</h2>
+    <p class="section-desc">설정에서 단축키를 변경할 수 있습니다.</p>
+    <div class="key-grid">
+      <div class="key-item"><strong>실행 취소</strong><kbd>Ctrl</kbd> + <kbd>Z</kbd></div><div class="key-item"><strong>다시 실행</strong><kbd>Ctrl</kbd> + <kbd>Y</kbd></div><div class="key-item"><strong>연필</strong><kbd>Q</kbd></div>
+      <div class="key-item"><strong>지우개</strong><kbd>W</kbd></div><div class="key-item"><strong>직선</strong><kbd>E</kbd></div><div class="key-item"><strong>영역 채우기</strong><kbd>R</kbd></div>
+      <div class="key-item"><strong>도장</strong><kbd>T</kbd></div><div class="key-item"><strong>연결 색상 채우기</strong><kbd>F</kbd></div><div class="key-item"><strong>지우기 전환</strong><kbd>X</kbd></div>
+      <div class="key-item"><strong>브러시 작게</strong><kbd>1</kbd></div><div class="key-item"><strong>브러시 크게</strong><kbd>2</kbd></div><div class="key-item"><strong>저장</strong><kbd>Ctrl</kbd> + <kbd>S</kbd></div>
+    </div>
+  </section>
+
+  <section class="section" id="practice">
+    <h2 class="section-title">따라하기</h2>
+    <ol class="steps">
+      <li><div><strong>에셋 관리에서 새 프리셋을 만들거나 기존 에셋을 선택합니다.</strong></div></li>
+      <li><div><strong>제작실에서 레이어를 추가하고 전개도 또는 3D 그리기로 색을 넣습니다.</strong></div></li>
+      <li><div><strong>패턴 레이어를 만들고 팔레트 색상을 더블클릭해 색을 치환해 봅니다.</strong></div></li>
+      <li><div><strong>에셋을 저장한 뒤 조립 탭에서 해당 슬롯의 에셋으로 선택합니다.</strong></div></li>
+      <li><div><strong>같은 색상 그룹을 가진 레이어가 있다면 그룹 팔레트에서 색을 바꾸고 다른 그룹은 변하지 않는지 확인합니다.</strong></div></li>
+      <li><div><strong>명암 마스크를 활성화하고 블렌딩 효과를 모두 끈 뒤에도 일반 명암 레이어가 남는지 확인합니다.</strong></div></li>
+      <li><div><strong>완성 스킨은 PNG로, 다시 편집할 조립 상태는 .skinproj로 내보냅니다.</strong></div></li>
+    </ol>
+    <label class="check"><input type="checkbox"> 에셋 미선택 상태에서는 제작실 편집이 적용되지 않는 것을 확인했습니다.</label>
+    <label class="check"><input type="checkbox"> 같은 그룹의 중복 색상이 팔레트에 한 번만 표시되는 것을 확인했습니다.</label>
+    <label class="check"><input type="checkbox"> 다른 그룹의 동일 색상은 치환되지 않는 것을 확인했습니다.</label>
+    <label class="check"><input type="checkbox"> 제작실 프로젝트와 조립 프로젝트의 저장 목적 차이를 이해했습니다.</label>
   </section>
 </main>
 </div>
-
 <script>
-  const sections = document.querySelectorAll('.section');
-  const navItems = document.querySelectorAll('.nav-item');
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) entry.target.classList.add('visible');
-    });
-  }, { threshold: 0.12 });
-  sections.forEach(section => observer.observe(section));
-
-  window.addEventListener('scroll', () => {
-    let current = '';
-    sections.forEach(section => {
-      const top = section.offsetTop - 120;
-      if (window.scrollY >= top) current = section.getAttribute('id');
-    });
-    navItems.forEach(item => {
-      item.classList.toggle('active', item.getAttribute('href') === '#' + current);
-    });
-  });
+const sections=document.querySelectorAll('.section');const links=document.querySelectorAll('.nav-item');const observer=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')}),{threshold:.1});sections.forEach(s=>observer.observe(s));addEventListener('scroll',()=>{let id='overview';sections.forEach(s=>{if(scrollY>=s.offsetTop-140)id=s.id});links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+id))});
 </script>
 </body>
 </html>
+
